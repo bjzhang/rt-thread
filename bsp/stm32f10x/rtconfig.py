@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m3'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -14,18 +14,18 @@ if os.getenv('RTT_CC'):
 # 'STM32F10X_MD','STM32F10X_MD_VL',
 # 'STM32F10X_HD','STM32F10X_HD_VL',
 # 'STM32F10X_XL','STM32F10X_CL'
-STM32_TYPE = 'STM32F10X_HD'
+STM32_TYPE = 'STM32F10X_MD'
 
 # lcd panel options
 # 'FMT0371','ILI932X', 'SSD1289'
-RT_USING_LCD_TYPE = 'SSD1289'
+#RT_USING_LCD_TYPE = 'SSD1289'
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'D:/SourceryGCC/bin'
+	EXEC_PATH 	= '/home/bamvor/Downloads_new/arm/arm_linux/toolchain/arm-2012.09_eabi/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'
