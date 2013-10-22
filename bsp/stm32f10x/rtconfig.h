@@ -12,7 +12,7 @@
 #define RT_THREAD_PRIORITY_MAX	32
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND	1000
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -81,23 +81,23 @@
 #define FINSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem */
-/* #define RT_USING_DFS */
+//#define RT_USING_DFS
 
-#define RT_USING_DFS_ELMFAT
+//#define RT_USING_DFS_ELMFAT
 /* Reentrancy (thread safe) of the FatFs module.  */
-#define RT_DFS_ELM_REENTRANT
+//#define RT_DFS_ELM_REENTRANT
 /* Number of volumes (logical drives) to be used. */
-#define RT_DFS_ELM_DRIVES			2
+//#define RT_DFS_ELM_DRIVES			2
 /* #define RT_DFS_ELM_USE_LFN			1 */
 /* #define RT_DFS_ELM_CODE_PAGE			936 */
-#define RT_DFS_ELM_MAX_LFN			255
+//#define RT_DFS_ELM_MAX_LFN			255
 /* Maximum sector size to be handled. */
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+//#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
+#define DFS_FILESYSTEMS_MAX			1
 /* the max number of opened files 		*/
-#define DFS_FD_MAX					4
+#define DFS_FD_MAX					1
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */
@@ -152,20 +152,20 @@
 #define RT_LWIP_TCP_WND		8192
 
 /* SECTION: RT-Thread/GUI */
-/* #define RT_USING_RTGUI */
+//#define RT_USING_RTGUI
 
 /* name length of RTGUI object */
 #define RTGUI_NAME_MAX		12
 /* support 16 weight font */
 #define RTGUI_USING_FONT16
 /* support Chinese font */
-#define RTGUI_USING_FONTHZ
+//#define RTGUI_USING_FONTHZ
 /* use DFS as file interface */
 #define RTGUI_USING_DFS_FILERW
 /* use font file as Chinese font */
-#define RTGUI_USING_HZ_FILE
+//#define RTGUI_USING_HZ_FILE
 /* use Chinese bitmap font */
-#define RTGUI_USING_HZ_BMP
+//#define RTGUI_USING_HZ_BMP
 /* use small size in RTGUI */
 #define RTGUI_USING_SMALL_SIZE
 /* use mouse cursor */

@@ -25,7 +25,7 @@ STM32_TYPE = 'STM32F10X_MD'
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= '/home/bamvor/work/toolchain/gcc-arm-none-eabi-4_7-2013q1/bin'
+	EXEC_PATH 	= '/home/bamvor/Downloads_new/arm/arm_linux/toolchain/arm-2012.09_eabi/bin/'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'

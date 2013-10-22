@@ -13,17 +13,57 @@
 //[7]0 1 2 3 ... 127 		   
 u8 OLED_GRAM[128][8];	 
 
-//#define OLED_CS PAout(9)
-//#define OLED_RS PAout(8)
-//#define OLED_SCLK PBout(0)
-//#define OLED_SDIN PBout(1)
+#if OLED_MODE==1
+//******************************************************************************** 
+#define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2)) 
+#define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr)) 
+#define BIT_ADDR(addr, bitnum)   MEM_ADDR(BITBAND(addr, bitnum)) 
+//IO口地址映射
+#define GPIOA_ODR_Addr    (GPIOA_BASE+12) //0x4001080C 
+#define GPIOB_ODR_Addr    (GPIOB_BASE+12) //0x40010C0C 
+#define GPIOC_ODR_Addr    (GPIOC_BASE+12) //0x4001100C 
+#define GPIOD_ODR_Addr    (GPIOD_BASE+12) //0x4001140C 
+#define GPIOE_ODR_Addr    (GPIOE_BASE+12) //0x4001180C 
+#define GPIOF_ODR_Addr    (GPIOF_BASE+12) //0x40011A0C    
+#define GPIOG_ODR_Addr    (GPIOG_BASE+12) //0x40011E0C    
+
+#define GPIOA_IDR_Addr    (GPIOA_BASE+8) //0x40010808 
+#define GPIOB_IDR_Addr    (GPIOB_BASE+8) //0x40010C08 
+#define GPIOC_IDR_Addr    (GPIOC_BASE+8) //0x40011008 
+#define GPIOD_IDR_Addr    (GPIOD_BASE+8) //0x40011408 
+#define GPIOE_IDR_Addr    (GPIOE_BASE+8) //0x40011808 
+#define GPIOF_IDR_Addr    (GPIOF_BASE+8) //0x40011A08 
+#define GPIOG_IDR_Addr    (GPIOG_BASE+8) //0x40011E08 
+ 
+//IO口操作,只对单一的IO口!
+//确保n的值小于16!
+#define PAout(n)   BIT_ADDR(GPIOA_ODR_Addr,n)  //输出 
+#define PAin(n)    BIT_ADDR(GPIOA_IDR_Addr,n)  //输入 
+
+#define PBout(n)   BIT_ADDR(GPIOB_ODR_Addr,n)  //输出 
+#define PBin(n)    BIT_ADDR(GPIOB_IDR_Addr,n)  //输入 
+
+#define PCout(n)   BIT_ADDR(GPIOC_ODR_Addr,n)  //输出 
+#define PCin(n)    BIT_ADDR(GPIOC_IDR_Addr,n)  //输入 
+
+#define OLED_CS PCout(9)
+//#define OLED_RST  PBout(14)//在MINISTM32上直接接到了STM32的复位脚！	
+#define OLED_RS PCout(8)
+#define OLED_WR PCout(7)		  
+#define OLED_RD PCout(6)
+//#define OLED_CS(DataValue) {GPIO_Write(GPIOC,(GPIO_ReadOutputData(GPIOC)&(~0x0200))|(DataValue&0x0200));}  
+//#define OLED_RS(DataValue) {GPIO_Write(GPIOC,(GPIO_ReadOutputData(GPIOC)&(~0x0100))|(DataValue&0x0100));}  
+//#define OLED_WR(DataValue) {GPIO_Write(GPIOC,(GPIO_ReadOutputData(GPIOC)&(~0x0080))|(DataValue&0x0080));}  
+//#define OLED_RD(DataValue) {GPIO_Write(GPIOC,(GPIO_ReadOutputData(GPIOC)&(~0x0040))|(DataValue&0x0040));}  
+#define DATAOUT(DataValue) {GPIO_Write(GPIOB,(GPIO_ReadOutputData(GPIOB)&0xff00)|(DataValue&0x00FF));}  
+#else
 #define oled_cs_rcc                 RCC_APB2Periph_GPIOB
 #define oled_cs_gpio                GPIOB
-#define oled_cs_pin                 (GPIO_Pin_3)
+#define oled_cs_pin                 (GPIO_Pin_9)
 
 #define oled_rs_rcc                 RCC_APB2Periph_GPIOB
 #define oled_rs_gpio                GPIOB
-#define oled_rs_pin                 (GPIO_Pin_4)
+#define oled_rs_pin                 (GPIO_Pin_8)
 
 #define oled_sclk_rcc               RCC_APB2Periph_GPIOB
 #define oled_sclk_gpio              GPIOB
@@ -32,21 +72,30 @@ u8 OLED_GRAM[128][8];
 #define oled_sdin_rcc               RCC_APB2Periph_GPIOB
 #define oled_sdin_gpio              GPIOB
 #define oled_sdin_pin               (GPIO_Pin_1)
+#endif
 
 void rt_hw_oled_init(void)
 {
-    //enable clock
-//	RCC->APB2ENR|=1<<2;    //使能PORTA时钟 
-//	RCC->APB2ENR|=1<<3;    //使能PORTB时钟 
-    // set output 50M, output 1
-//	GPIOB->CRL&=0XFFFFFF00;
-//	GPIOB->CRL|=0XF0000033;
-//	GPIOB->ODR|=0X03;
-//
-    // set output 50M, output 1
-// 	GPIOA->CRH&=0XFFFFFF00;	   
-// 	GPIOA->CRH|=0X00000033;	 
-//	GPIOA->ODR|=3<<8;
+#if OLED_MODE==1
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC, ENABLE );
+		  
+ 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);						    	 
+	GPIO_Write(GPIOB,0XFFFF);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_SetBits(GPIOC, GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9);//如果每一位决定一个GPIO_Pin,则可以通过或的形式来初始化多个IO
+
+#else
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_APB2PeriphClockCmd(oled_cs_rcc|oled_rs_rcc|oled_sclk_rcc|oled_sdin_rcc,ENABLE);
@@ -69,7 +118,7 @@ void rt_hw_oled_init(void)
     GPIO_InitStructure.GPIO_Pin   = oled_sdin_pin;
     GPIO_Init(oled_sdin_gpio, &GPIO_InitStructure);
     GPIO_SetBits(oled_sdin_gpio, oled_sdin_pin);
-
+#endif 
 }
 
 //更新显存到LCD		 
@@ -97,6 +146,12 @@ void OLED_WR_Byte(u8 dat,u8 cmd)
 	OLED_WR=1;
 	OLED_CS=1;	  
 	OLED_RS=1;	 
+// 	OLED_RS(cmd);
+//	OLED_CS(0);	   
+//	OLED_WR(0);	 
+//	OLED_WR(1);
+//	OLED_CS(1);	  
+//	OLED_RS(1);	 
 } 	    	    
 #else
 //向SSD1306写入一个字节。
@@ -106,20 +161,28 @@ void OLED_WR_Byte(u8 dat,u8 cmd)
 {	
 	u8 i;			  
     GPIO_WriteBit(oled_rs_gpio, oled_rs_pin, cmd);
+    rt_thread_delay(1);
     GPIO_ResetBits(oled_cs_gpio, oled_cs_pin);
+    rt_thread_delay(1);
 	for(i=0;i<8;i++)
 	{			  
         GPIO_ResetBits(oled_sclk_gpio, oled_sclk_pin);
+        rt_thread_delay(1);
 		if(dat&0x80)
             GPIO_SetBits(oled_sdin_gpio, oled_sdin_pin);
 		else
             GPIO_ResetBits(oled_sdin_gpio, oled_sdin_pin);
 
+        rt_thread_delay(1);
+
         GPIO_SetBits(oled_sclk_gpio, oled_sclk_pin);
+        rt_thread_delay(1);
 		dat<<=1;   
 	}				 
     GPIO_SetBits(oled_cs_gpio, oled_cs_pin);
+    rt_thread_delay(1);
     GPIO_SetBits(oled_rs_gpio, oled_rs_pin);
+    rt_thread_delay(1);
 } 
 #endif
 	  	  
@@ -252,6 +315,7 @@ void OLED_ShowString(u8 x,u8 y,const u8 *p)
 void OLED_Init(void)
 { 	 				 	 					    
     rt_hw_oled_init();
+//    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
 //	OLED_RST=0;
 //	delay_ms(100);
 //	OLED_RST=1; 
@@ -292,15 +356,23 @@ void OLED_Init(void)
 #include <finsh.h>
 void oled()
 {
+    SystemInit();
     OLED_Init();
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
 
  	OLED_ShowString(0,0, "0.96' OLED TEST");  
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
  	OLED_ShowString(0,16,"ATOM@ALIENTEK");  
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
  	OLED_ShowString(0,32,"2010/06/3");  
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
 
  	OLED_ShowString(0,48,"ASCII:");  
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
  	OLED_ShowString(63,48,"CODE:");  
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
 	OLED_Refresh_Gram();	 
+    rt_kprintf("%s:%s<%d>\r\n", __FILE__, __FUNCTION__, __LINE__);
 }
 FINSH_FUNCTION_EXPORT(oled, oled test)
 #endif
