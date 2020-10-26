@@ -556,6 +556,13 @@ struct rt_cpu
 
 #endif
 
+#ifdef RISCV_U_MODE
+enum rt_thread_mode {
+    RT_KERNEL_MODE = 0,
+    RT_USER_MODE = 1,
+};
+#endif
+
 /**
  * Thread structure
  */
@@ -633,6 +640,14 @@ struct rt_thread
 #endif
 
     rt_ubase_t user_data;                             /**< private user data beyond this thread */
+
+#ifdef RISCV_U_MODE
+    rt_uint8_t mode;
+#endif
+
+#ifdef RT_USING_MMU
+    void *pgdir;
+#endif
 };
 typedef struct rt_thread *rt_thread_t;
 

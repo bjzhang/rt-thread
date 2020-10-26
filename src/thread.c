@@ -30,6 +30,13 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#ifdef RISCV_U_MODE
+#include <string.h>
+#include <pgtable.h>
+#include <elf.h>
+#include <vm.h>
+#include <board.h>
+#endif
 
 extern rt_list_t rt_thread_defunct;
 
@@ -107,6 +114,14 @@ void rt_thread_exit(void)
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
     }
 
+#ifdef RT_USING_MMU
+    // PGDIR should sync with vm.c
+    #define PGDIR_PA (0x10200000UL + 24 * 1024 * 1024) // 2MB above heap top
+    /* freeing up all allocated userland memory */
+    //if ((uint64_t)(thread->pgdir) != PGDIR_PA)
+        // rt_cleanup_pgtable(thread->pgdir);
+#endif
+
     /* switch to next task */
     rt_schedule();
 
@@ -125,6 +140,12 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 {
     /* init thread list */
     rt_list_init(&(thread->tlist));
+
+#ifdef RT_USING_MMU
+    if (thread->pgdir == NULL) {
+        thread->pgdir = (void *)PGDIR_PA;
+    }
+#endif
 
     thread->entry = (void *)entry;
     thread->parameter = parameter;
@@ -401,6 +422,29 @@ rt_thread_t rt_thread_create(const char *name,
     if (thread == RT_NULL)
         return RT_NULL;
 
+#ifdef RISCV_U_MODE
+    #define PG_SZ 4096
+    /* currently we only support ENABLE U mode with heap */
+    if ((uint64_t)entry == 0xFFFFFFE000000000ULL) {
+        // for test purpose only
+        thread->mode = RT_USER_MODE;
+        /* enable and switch to userland pgdir */
+        thread->pgdir = (void *)allocPage();
+        rt_init_user_mem(thread, name, &entry);
+        stack_start = (void *)USER_STACK_BASE;
+    } else {
+        thread->mode = RT_KERNEL_MODE;
+        thread->pgdir = (void *)PGDIR_PA;
+        stack_start = (void *)RT_KERNEL_MALLOC(stack_size);
+        if (stack_start == RT_NULL)
+        {
+            /* allocate stack failure */
+            rt_object_delete((rt_object_t)thread);
+
+            return RT_NULL;
+        }
+    }
+#else
     stack_start = (void *)RT_KERNEL_MALLOC(stack_size);
     if (stack_start == RT_NULL)
     {
@@ -409,6 +453,7 @@ rt_thread_t rt_thread_create(const char *name,
 
         return RT_NULL;
     }
+#endif
 
     _rt_thread_init(thread,
                     name,

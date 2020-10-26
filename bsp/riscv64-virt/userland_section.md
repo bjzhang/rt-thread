@@ -1,0 +1,1 @@
+.text .text.main .data .bss .comment .rodata .rodata*

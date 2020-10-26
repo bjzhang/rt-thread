@@ -226,6 +226,9 @@ long list_thread(void)
                     else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
                     else if (stat == RT_THREAD_RUNNING) rt_kprintf(" running");
 
+#ifdef RT_USING_MMU
+                    switch_pgdir(thread->pgdir);
+#endif
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
                     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
                     while (*ptr == '#')ptr --;

@@ -220,8 +220,10 @@ void rt_thread_idle_excute(void)
         rt_hw_interrupt_enable(lock);
 
 #ifdef RT_USING_HEAP
+#ifndef RT_USING_MMU
         /* release thread's stack */
         RT_KERNEL_FREE(thread->stack_addr);
+#endif
         /* delete thread object */
         rt_object_delete((rt_object_t)thread);
 #endif
