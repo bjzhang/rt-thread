@@ -18,6 +18,13 @@
 
 //#include "./@PROJECT_MACHINE@/sys.h"
 
+/** Structure for rt-thread libmetal runtime state. */
+struct metal_state {
+
+	/** Common (system independent) data. */
+	struct metal_common_state common;
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif

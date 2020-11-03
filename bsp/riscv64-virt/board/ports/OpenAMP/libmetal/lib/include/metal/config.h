@@ -30,18 +30,18 @@ extern "C" {
 
 /** System type (linux, generic, ...). */
 #define METAL_SYSTEM		"rtthread"
-#define METAL_SYSTEM_@PROJECT_SYSTEM_UPPER@
+#define METAL_SYSTEM_RTTHREAD
 
 /** Processor type (arm, x86_64, ...). */
-#define METAL_PROCESSOR		"@PROJECT_PROCESSOR@"
-#define METAL_PROCESSOR_@PROJECT_PROCESSOR_UPPER@
+#define METAL_PROCESSOR		"riscv"
+#define METAL_PROCESSOR_RISCV
 
 /** Machine type (zynq, zynqmp, ...). */
-#define METAL_MACHINE		"@PROJECT_MACHINE@"
-#define METAL_MACHINE_@PROJECT_MACHINE_UPPER@
+#define METAL_MACHINE		"virt"
+#define METAL_MACHINE_VIRT
 
-#cmakedefine HAVE_STDATOMIC_H
-#cmakedefine HAVE_FUTEX_H
+#define HAVE_STDATOMIC_H
+//#undef HAVE_FUTEX_H
 
 #ifdef __cplusplus
 }

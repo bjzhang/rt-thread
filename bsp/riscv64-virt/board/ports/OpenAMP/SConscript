@@ -1,0 +1,26 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'applications')
+include_path = Split("""
+libmetal/lib/include
+libmetal/test
+libmetal/lib/include/metal/processor
+""")
+
+src = Split("""
+libmetal/test/metal-test.c
+libmetal/test/system/rtthread/main.c
+libmetal/lib/device.c
+libmetal/lib/log.c
+libmetal/lib/init.c
+libmetal/lib/system/rtthread/device.c
+libmetal/lib/system/rtthread/init.c
+libmetal/lib/system/rtthread/io.c
+libmetal/lib/system/rtthread/riscv/sys.c
+""")
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path)
+
+Return('group')

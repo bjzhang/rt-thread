@@ -12,6 +12,6 @@
 #ifndef __METAL_CPU__H__
 #define __METAL_CPU__H__
 
-# include <metal/processor/@PROJECT_PROCESSOR@/cpu.h>
+# include <metal/processor/riscv/cpu.h>
 
 #endif /* __METAL_CPU__H__ */
