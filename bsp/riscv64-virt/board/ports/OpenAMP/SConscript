@@ -15,12 +15,12 @@ libmetal/test/system/rtthread/main.c
 libmetal/lib/device.c
 libmetal/lib/log.c
 libmetal/lib/init.c
+libmetal/lib/system/rtthread/io.c
 libmetal/lib/system/rtthread/device.c
 libmetal/lib/system/rtthread/init.c
-libmetal/lib/system/rtthread/io.c
 libmetal/lib/system/rtthread/riscv/sys.c
 """)
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path)
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = ['DEFAULT_LOGGER_ON'])
 
 Return('group')

@@ -69,6 +69,8 @@ int metal_tests_run(struct metal_init_params *params)
 	if (error)
 		return error;
 
+	printf("%s\n", __func__);
+	metal_log(METAL_LOG_INFO,"%s\n", __func__);
 	metal_list_for_each(&test_cases, node) {
 		test_case = metal_container_of(node, struct metal_test_case,
 					       node);

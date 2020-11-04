@@ -14,7 +14,7 @@
 #include <metal/sys.h>
 #include <metal/utilities.h>
 
-int metal_rtthread_dev_sys_open(struct metal_device *dev)
+int metal_generic_dev_sys_open(struct metal_device *dev)
 {
 	struct metal_io_region *io;
 	unsigned int i;
