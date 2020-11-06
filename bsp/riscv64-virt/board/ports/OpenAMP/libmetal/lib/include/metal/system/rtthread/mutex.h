@@ -17,6 +17,9 @@
 #define __METAL_RTTHREAD_MUTEX__H__
 
 #include <metal/atomic.h>
+#include <stdio.h>
+#include <rtdef.h>
+#include <rtthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,19 +53,23 @@ static inline void __metal_mutex_init(metal_mutex_t *m)
     const char *mutex_name;
 
     ret = sprintf(name, "RTT_MUTEX_%llx", m);
-    if (ret < 0)
+    if (ret < 0) {
+	printf("printf: sprintf failed\n");
+	metal_log(METAL_LOG_DEBUG, "metal_log: sprintf failed\n");
         //fatal: raise error
         do {}
         while (0);
+    }
 
+    mutex_name = name;
     err = rt_mutex_init(m, mutex_name, RT_IPC_FLAG_FIFO);
-    if (RT_EOK != err)
+    if (RT_EOK != err) {
+	printf("printf: rt_mutex_init failed\n");
+	metal_log(METAL_LOG_DEBUG, "metal_log: rt_mutex_init failed\n");
         //fatal: raise error
         do {}
         while (0);
-
-    free(name);
-    name = NULL;
+    }
 }
 
 static inline void __metal_mutex_deinit(metal_mutex_t *m)
@@ -76,15 +83,15 @@ static inline int __metal_mutex_try_acquire(metal_mutex_t *m)
 
     err = rt_mutex_take(m, 0);
     if (RT_EOK == err)
-        return 0;
-    else
         return -err;
+    else
+        return 0;
 
 }
 
 static inline int __metal_mutex_is_acquired(metal_mutex_t *m)
 {
-    return 0 == mutex->value;
+    return 0 == m->value;
 }
 
 static inline void __metal_mutex_acquire(metal_mutex_t *m)

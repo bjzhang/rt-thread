@@ -88,10 +88,14 @@ int metal_tests_run(struct metal_init_params *params)
 			errors++;
 	}
 
-	extern int atomic(void);
-	printf("atomic test\n");
-	atomic();
-	printf("atomic test end\n");
+//	extern int atomic(void);
+//	printf("atomic test\n");
+//	atomic();
+//	printf("atomic test end\n");
+	extern int mutex(void);
+	printf("mutex test\n");
+	mutex();
+	printf("mutex test end\n");
 	metal_finish();
 
 	return errors;

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <pthread.h>
 #include <stdlib.h>
 #include <sys/errno.h>
 
@@ -13,6 +12,11 @@
 #include <metal/log.h>
 #include <metal/sys.h>
 #include "metal-test-internal.h"
+#include <rtthread.h>
+
+#define THREAD_PRIORITY         25
+#define THREAD_STACK_SIZE       512
+#define THREAD_TIMESLICE        10
 
 static const int atomic_test_count = 10;
 
@@ -22,24 +26,47 @@ static void atomic_thread(void *arg)
 	int i;
 
 
-	printf("%s\n", __func__);
-	metal_log(METAL_LOG_DEBUG, "%s enter: atomic test count %d\n", __func__,
-		  atomic_test_count);
-	for (i = 0; i < atomic_test_count; i++) {
-		atomic_fetch_add(c, 1);
-		metal_log(METAL_LOG_DEBUG, "counter %d\n", c);
-	}
+	printf("%s enter\n", __func__);
+//	metal_log(METAL_LOG_DEBUG, "%s enter: atomic test count %d\n", __func__,
+//		  atomic_test_count);
+//	for (i = 0; i < atomic_test_count; i++) {
+//		printf("counter before add %d\n", c);
+//		atomic_fetch_add(c, 1);
+////		metal_log(METAL_LOG_DEBUG, "counter %d\n", c);
+//		printf("counter %d\n", c);
+//	}
 	printf("%s exit\n", __func__);
 }
 
 int atomic(void)
 {
-	const int threads = 10;
+	const int threads = 1;
 	atomic_int counter = ATOMIC_VAR_INIT(0);
 	int value, error;
+	rt_thread_t thread = NULL;
 
 	metal_log(METAL_LOG_DEBUG, "%s\n", __func__);
-	error = metal_run(threads, atomic_thread, &counter);
+	thread = rt_thread_create("atomic", atomic_thread, RT_NULL,
+				  THREAD_STACK_SIZE,
+				  THREAD_PRIORITY,
+				  THREAD_TIMESLICE);
+        if (thread != RT_NULL)
+        {
+            metal_log(METAL_LOG_DEBUG, "create ok\n");
+            rt_thread_startup(thread);
+            metal_log(METAL_LOG_DEBUG, "rt_thread_startup return\n");
+        }
+        else
+        {
+            metal_log(METAL_LOG_ERROR, "failed to create thread\n");
+	    error--;
+        }
+	atomic_fetch_add(&counter, 1);
+	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
+	printf("counter %d\n", counter);
+	printf("before delay\n");
+	rt_thread_delay(200);
+	printf("after delay\n");
 	if (!error) {
 		metal_log(METAL_LOG_DEBUG, "after metal_run\n");
 		value = atomic_load(&counter);

@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <pthread.h>
-
 #include "metal-test.h"
 #include <metal/log.h>
 #include <metal/sys.h>
 #include <metal/mutex.h>
+#include <rtthread.h>
 
 static const int mutex_test_count = 1000;
+
+void usleep(int tick)
+{
+    rt_thread_delay(tick);
+}
 
 static void *mutex_thread(void *arg)
 {
@@ -23,20 +27,25 @@ static void *mutex_thread(void *arg)
         metal_mutex_acquire(l);
         usleep(1);
         metal_mutex_release(l);
+	if (i % 100 == 0)
+		printf("count: %d\n", i);
     }
 
     return NULL;
 }
 
-static int mutex(void)
+int mutex(void)
 {
     metal_mutex_t lock;
     const int threads = 10;
     int rc;
 
+    printf("before metal_mutex_init\n");
     metal_mutex_init(&lock);
+    printf("after metal_mutex_init\n");
 
-    rc = metal_run(threads, mutex_thread, &lock);
+    //rc = metal_run(threads, mutex_thread, &lock);
+    mutex_thread(&lock);
 
     metal_mutex_deinit(&lock);
 

@@ -34,8 +34,8 @@ static void thread_entry(void* parameter)
         /* 打印线程计数值输出 */
         rt_kprintf("thread%d count: %d\n", no, count ++);
 
-        /* 休眠10个OS Tick */
-        rt_thread_delay(10);
+//        /* 休眠10个OS Tick */
+//        rt_thread_delay(10);
     }
 }
 
@@ -63,7 +63,7 @@ int thread_static_simple()
     else
         printf("TC_STAT_END | TC_STAT_FAILED");
 
-    rt_thread_delay(1000);
+    rt_thread_delay(100);
     printf("%s return\n", __func__);
     return 0;
 }
