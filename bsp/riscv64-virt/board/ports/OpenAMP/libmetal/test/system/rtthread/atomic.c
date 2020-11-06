@@ -16,20 +16,20 @@
 
 static const int atomic_test_count = 10;
 
-static void *atomic_thread(void *arg)
+static void atomic_thread(void *arg)
 {
 	atomic_int *c = arg;
 	int i;
 
 
+	printf("%s\n", __func__);
 	metal_log(METAL_LOG_DEBUG, "%s enter: atomic test count %d\n", __func__,
 		  atomic_test_count);
 	for (i = 0; i < atomic_test_count; i++) {
 		atomic_fetch_add(c, 1);
 		metal_log(METAL_LOG_DEBUG, "counter %d\n", c);
 	}
-
-	return NULL;
+	printf("%s exit\n", __func__);
 }
 
 int atomic(void)

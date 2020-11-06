@@ -20,7 +20,7 @@ extern "C" {
 #include <metal/list.h>
 
 typedef int (*test_func_t)(void);
-typedef void *(*metal_thread_t)(void *);
+typedef void (*metal_thread_t)(void *);
 
 struct metal_test_case {
 	struct metal_list node;

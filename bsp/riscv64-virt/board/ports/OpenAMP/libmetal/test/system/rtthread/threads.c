@@ -14,7 +14,7 @@
 
 #define THREAD_PRIORITY         25
 #define THREAD_STACK_SIZE       512
-#define THREAD_TIMESLICE        5
+#define THREAD_TIMESLICE        10
 
 int metal_run(int threads, metal_thread_t child, void *arg)
 {
