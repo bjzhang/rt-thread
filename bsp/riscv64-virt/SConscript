@@ -12,4 +12,5 @@ for d in list:
         objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
 objs = objs + SConscript(os.path.join('board/ports/OpenAMP', 'SConscript'))
+
 Return('objs')
