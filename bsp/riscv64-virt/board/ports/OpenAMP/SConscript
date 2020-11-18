@@ -3,11 +3,16 @@ Import('rtconfig')
 from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'applications')
+
 include_path = Split("""
 libmetal/lib/include
 libmetal/test
 libmetal/lib/include/metal/processor
+open-amp/lib/include
 """)
+
+# For open-amp platform_info.h
+include_path += ['open-amp/apps/system/rtthread/machine/generic']
 
 src = Split("""
 libmetal/lib/device.c
@@ -27,6 +32,8 @@ libmetal/test/metal-test.c
 libmetal/test/system/rtthread/main.c
 libmetal/test/system/rtthread/threads.c
 """)
+
+# src += ['open-amp/apps/examples/rpmsg_sample_echo/rpmsg-sample-echo.c']
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = ['DEFAULT_LOGGER_ON'])
 

@@ -55,7 +55,7 @@ static inline void __metal_mutex_init(metal_mutex_t *m)
     ret = sprintf(name, "RTT_MUTEX_%llx", m);
     if (ret < 0) {
 	printf("printf: sprintf failed\n");
-	metal_log(METAL_LOG_DEBUG, "metal_log: sprintf failed\n");
+	//metal_log(METAL_LOG_DEBUG, "metal_log: sprintf failed\n");
         //fatal: raise error
         do {}
         while (0);
@@ -65,7 +65,7 @@ static inline void __metal_mutex_init(metal_mutex_t *m)
     err = rt_mutex_init(m, mutex_name, RT_IPC_FLAG_FIFO);
     if (RT_EOK != err) {
 	printf("printf: rt_mutex_init failed\n");
-	metal_log(METAL_LOG_DEBUG, "metal_log: rt_mutex_init failed\n");
+	//metal_log(METAL_LOG_DEBUG, "metal_log: rt_mutex_init failed\n");
         //fatal: raise error
         do {}
         while (0);
