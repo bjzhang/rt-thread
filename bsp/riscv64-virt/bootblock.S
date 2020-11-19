@@ -19,14 +19,14 @@
 // #define BOOT_LOADER_SIG_OFFSET 0x1fe
 // #define OS_SIZE_LOC (BOOT_LOADER_SIG_OFFSET - 2)
 // #define OS_SIZE_LOC 0x1fc
-#define KERNEL_STACK	0x10500000
-.equ os_size_loc, 0x102001fc
+#define KERNEL_STACK	0x80500000
+.equ os_size_loc, 0x802001fc
 
 // 1. kernel address (move kernel to here ~)
-.equ kernel, 0x10201000
+.equ kernel, 0x80201000
 
 // 2. kernel main address (jmp here to start kernel main!)
-.equ kernel_main, 0x10201000
+.equ kernel_main, 0x80201000
 
 .text
 .global main

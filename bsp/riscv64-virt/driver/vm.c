@@ -10,7 +10,7 @@
 
 /********* setup memory mapping ***********/
 
-#define PGDIR_PA (0x10200000UL + 24 * 1024 * 1024) // 4MB above heap top
+#define PGDIR_PA (0x80200000UL + 24 * 1024 * 1024) // 4MB above heap top
 
 uint64_t page_table = PGDIR_PA;
 static uintptr_t alloc_page()

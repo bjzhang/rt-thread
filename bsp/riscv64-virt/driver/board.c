@@ -72,7 +72,7 @@ void rt_syscall_init() {
     syscall[SYSCALL_EXIT] = &rt_thread_exit;
 }
 
-#define PGDIR_PA (0x10200000UL + 24 * 1024 * 1024)
+#define PGDIR_PA (0x80200000UL + 24 * 1024 * 1024)
 void rt_init_user_mem(struct rt_thread *thread, const char *name, unsigned long *entry) {
     clear_pgdir((uintptr_t)thread->pgdir);
     share_pgtable((uintptr_t)thread->pgdir, PGDIR_PA);

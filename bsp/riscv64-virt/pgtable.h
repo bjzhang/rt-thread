@@ -25,10 +25,10 @@
 #define PAGE_SIZE 4096
 #endif
 
-#define BOOT_PADDR 0x10200000
-#define BOOT_VADDR 0x10200000
+#define BOOT_PADDR 0x80200000
+#define BOOT_VADDR 0x80200000
 #define MEM_SIZE 0x10000000
-#define MAP_BASE 0x10000000
+#define MAP_BASE 0x80000000
 
 /*
  * Flush entire local TLB.  'sfence.vma' implicitly fences with the instruction
