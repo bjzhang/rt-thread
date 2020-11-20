@@ -20,7 +20,7 @@
 
 struct device_uart
 {
-    rt_uint32_t hw_base;
+    rt_uint8_t *hw_base;
     rt_uint32_t irqno;
 };
 
@@ -48,12 +48,6 @@ void uart_init(void)
 struct rt_serial_device  serial1;
 struct device_uart       uart1;
 
-uint32_t buffer0[256] = {
-    0xffffffff, 0x5500ffff, 0xf77db57d, 0x00450008, 0x0000d400, 0x11ff0040,
-    0xa8c073d8, 0x00e00101, 0xe914fb00, 0x0004e914, 0x0000,     0x005e0001,
-    0x2300fb00, 0x84b7f28b, 0x00450008, 0x0000d400, 0x11ff0040, 0xa8c073d8,
-    0x00e00101, 0xe914fb00, 0x0801e914, 0x0000};
-
 /*
  * UART Initiation
  */
@@ -73,7 +67,7 @@ int rt_hw_uart_init(void)
         serial->config           = config;
         serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
 
-        uart->hw_base   = 0; // FOO implementation
+        uart->hw_base   = (rt_uint8_t*)0x10000000;
         uart->irqno     = 0; // FOO implementation
         
 
@@ -84,7 +78,6 @@ int rt_hw_uart_init(void)
                               RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                               uart);
     }
-    sbi_net_write(buffer0, 88);
 
     return 0;
 }
@@ -135,15 +128,27 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
 static int drv_uart_putc(struct rt_serial_device *serial, char c)
 {
-    // using SBI interface
-    SBI_CALL_1(SBI_CONSOLE_PUTCHAR, c);
+#define _REG8(p, i) (*(volatile rt_uint8_t *)((p) + (i)))
+#define UART_REG(uart, offset) _REG8(uart->hw_base, offset)
+#define THR (0)
+
+    struct rt_device *device;
+    struct device_uart      *uart;
+    rt_uint8_t *base;
+
+    RT_ASSERT(serial != RT_NULL);
+
+    device = &(serial->parent);
+    uart = device->user_data;
+    UART_REG(uart, THR) = c;
+
     return (1);
 }
 
 static int drv_uart_getc(struct rt_serial_device *serial)
 {
     // using SBI interface
-    return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    return 0;//SBI_CALL_0(SBI_CONSOLE_GETCHAR);
 }
 
 void drv_uart_puts(char *str) {
@@ -151,7 +156,7 @@ void drv_uart_puts(char *str) {
 }
 
 char rt_hw_console_getchar(void) {
-    return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    return 0;//SBI_CALL_0(SBI_CONSOLE_GETCHAR);
 }
 
 
