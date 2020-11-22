@@ -10,7 +10,7 @@
 
 /********* setup memory mapping ***********/
 
-#define PGDIR_PA (0x80200000UL + 24 * 1024 * 1024) // 4MB above heap top
+#define PGDIR_PA (0x90200000UL + 24 * 1024 * 1024) // 4MB above heap top
 
 uint64_t page_table = PGDIR_PA;
 static uintptr_t alloc_page()
@@ -62,11 +62,11 @@ static void setup_vm()
     }
 
     for (int i = 0; i < 8; ++i) {
-        map_page(0x1f000000 + 0x200000 * i,0x1f000000 + 0x200000 * i,(PTE *)PGDIR_PA);
+        map_page(MAP_BASE + 0x0f000000 + 0x200000 * i, MAP_BASE + 0x0f000000 + 0x200000 * i,(PTE *)PGDIR_PA);
     }
 
     for (int i = 0; i < 8; ++i) {
-        map_page(0x1e000000 + 0x200000 * i,0x1e000000 + 0x200000 * i,(PTE *)PGDIR_PA);
+        map_page(MAP_BASE + 0x0e000000 + 0x200000 * i, MAP_BASE + 0x0e000000 + 0x200000 * i,(PTE *)PGDIR_PA);
     }
     // write satp to enable paging
     set_satp(SATP_MODE_SV39, 0, PGDIR_PA >> NORMAL_PAGE_SHIFT);
