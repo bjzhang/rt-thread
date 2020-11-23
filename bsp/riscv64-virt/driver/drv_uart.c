@@ -67,7 +67,7 @@ int rt_hw_uart_init(void)
         serial->config           = config;
         serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
 
-        uart->hw_base   = (rt_uint8_t*)0x10000000;
+        uart->hw_base   = 0; // FOO implementation
         uart->irqno     = 0; // FOO implementation
         
 
@@ -128,27 +128,15 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
 static int drv_uart_putc(struct rt_serial_device *serial, char c)
 {
-#define _REG8(p, i) (*(volatile rt_uint8_t *)((p) + (i)))
-#define UART_REG(uart, offset) _REG8(uart->hw_base, offset)
-#define THR (0)
-
-    struct rt_device *device;
-    struct device_uart      *uart;
-    rt_uint8_t *base;
-
-    RT_ASSERT(serial != RT_NULL);
-
-    device = &(serial->parent);
-    uart = device->user_data;
-    UART_REG(uart, THR) = c;
-
+    // using SBI interface
+    SBI_CALL_1(SBI_CONSOLE_PUTCHAR, c);
     return (1);
 }
 
 static int drv_uart_getc(struct rt_serial_device *serial)
 {
     // using SBI interface
-    return 0;//SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    SBI_CALL_0(SBI_CONSOLE_GETCHAR);
 }
 
 void drv_uart_puts(char *str) {
@@ -156,7 +144,7 @@ void drv_uart_puts(char *str) {
 }
 
 char rt_hw_console_getchar(void) {
-    return 0;//SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    SBI_CALL_0(SBI_CONSOLE_GETCHAR);
 }
 
 
