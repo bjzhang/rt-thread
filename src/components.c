@@ -194,6 +194,8 @@ void rt_application_init(void)
 {
     rt_thread_t tid;
 
+    main();
+#if 0
 #ifdef RT_USING_HEAP
     tid = rt_thread_create("main", main_thread_entry, RT_NULL,
                            RT_MAIN_THREAD_STACK_SIZE, RT_MAIN_THREAD_PRIORITY, 20);
@@ -208,6 +210,7 @@ void rt_application_init(void)
 
     /* if not define RT_USING_HEAP, using to eliminate the warning */
     (void)result;
+#endif
 #endif
 
     rt_thread_startup(tid);
