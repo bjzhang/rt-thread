@@ -327,6 +327,7 @@ remoteproc_get_io_with_da(struct remoteproc *rproc,
 		return NULL;
 	}
 }
+#endif
 
 struct metal_io_region *
 remoteproc_get_io_with_va(struct remoteproc *rproc, void *va)
@@ -341,6 +342,7 @@ remoteproc_get_io_with_va(struct remoteproc *rproc, void *va)
 		return NULL;
 }
 
+#if 0
 void *remoteproc_mmap(struct remoteproc *rproc,
 		      metal_phys_addr_t *pa, metal_phys_addr_t *da,
 		      size_t size, unsigned int attribute,

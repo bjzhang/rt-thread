@@ -33,7 +33,10 @@ libmetal/test/system/rtthread/main.c
 libmetal/test/system/rtthread/threads.c
 """)
 
+# src += ['open-amp/apps/system/rtthread/machine/generic/helper.c']
 # src += ['open-amp/apps/examples/rpmsg_sample_echo/rpmsg-sample-echo.c']
+# src += ['open-amp/lib/rpmsg/rpmsg.c']
+# src += ['open-amp/apps/machine/rtthread/machine/generic/platform_info.c']
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = ['DEFAULT_LOGGER_ON'])
 

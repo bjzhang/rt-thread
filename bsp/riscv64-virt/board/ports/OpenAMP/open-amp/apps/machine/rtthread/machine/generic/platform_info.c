@@ -27,13 +27,13 @@
 #include <metal/utilities.h>
 #include <openamp/remoteproc.h>
 #include <openamp/rpmsg_virtio.h>
-#include <poll.h>
 #include <string.h>
 #include <stdio.h>
-#include <sys/socket.h>
 #include <sys/types.h>
-#include <sys/un.h>
+#define OPENAMP_HACK_RSC
+#ifndef OPENAMP_HACK_RSC
 #include "rsc_table.h"
+#endif /* ifndef OPENAMP_HACK_RSC */
 
 #define IPI_CHAN_NUMS 2
 #define IPI_CHAN_SEND 0
@@ -83,8 +83,11 @@ static struct remoteproc_priv rproc_priv_table [] = {
 
 static struct remoteproc rproc_inst;
 
+#endif
 /* External functions */
 extern int init_system(void);
+
+#if 0
 extern void cleanup_system(void);
 
 static int linux_proc_block_read(struct metal_io_region *io,
@@ -373,10 +376,10 @@ static struct remoteproc_ops linux_proc_ops = {
 	.shutdown = NULL,
 };
 
-#if 0
 /* RPMsg virtio shared buffer pool */
 static struct rpmsg_virtio_shm_pool shpool;
 
+#if 0
 static int platform_slave_setup_resource_table(const char *shm_file,
 					       int shm_size,
 					       void *rsc_table, int rsc_size,
@@ -503,7 +506,10 @@ platform_create_rpmsg_vdev(void *platform, unsigned int vdev_index,
 	if (!shbuf_io)
 		return NULL;
 	shbuf = metal_io_phys_to_virt(shbuf_io, SHARED_BUF_PA);
-
+#else
+//VRING_BUFF_ADDRESS
+#define OPENAMP_SHM_BASE 0xa0200000
+	shbuf = OPENAMP_SHM_BASE;
 #endif /* ifndef OPENAMP_HACK_SHM */
 	printf("creating remoteproc virtio\r\n");
 	/* TODO: can we have a wrapper for the following two functions? */
@@ -534,7 +540,6 @@ err1:
 	return NULL;
 }
 
-#if 0
 int platform_poll(void *priv)
 {
 	struct remoteproc *rproc = priv;
@@ -542,15 +547,22 @@ int platform_poll(void *priv)
 	struct vring_ipi_info *ipi;
 	unsigned int flags;
 
-	prproc = rproc->priv;
+#ifdef OPENAMP_RPROC
+		prproc = rproc->priv;
 	ipi = &prproc->ipi;
+#endif /* OPENAMP_RPROC */
 	while(1) {
 		flags = metal_irq_save_disable();
+#ifdef OPENAMP_RPROC
 		if (!(atomic_flag_test_and_set(&ipi->sync))) {
 			metal_irq_restore_enable(flags);
 			remoteproc_get_notification(rproc, RSC_NOTIFY_ID_ANY);
 			break;
 		}
+#else
+		metal_irq_restore_enable(flags);
+		remoteproc_get_notification(rproc, RSC_NOTIFY_ID_ANY);
+#endif /* #ifdef OPENAMP_RPROC */
 		_rproc_wait();
 		metal_irq_restore_enable(flags);
 	}
@@ -570,4 +582,3 @@ void platform_cleanup(void *platform)
 		remoteproc_remove(rproc);
 	cleanup_system();
 }
-#endif
