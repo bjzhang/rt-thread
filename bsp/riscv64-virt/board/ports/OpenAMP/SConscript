@@ -34,6 +34,7 @@ libmetal/test/system/rtthread/main.c
 libmetal/test/system/rtthread/threads.c
 """)
 
+src += ['libmetal/lib/io.c']
 # src += ['open-amp/apps/system/rtthread/machine/generic/helper.c']
 # src += ['open-amp/apps/examples/rpmsg_sample_echo/rpmsg-sample-echo.c']
 # src += ['open-amp/lib/rpmsg/rpmsg.c']

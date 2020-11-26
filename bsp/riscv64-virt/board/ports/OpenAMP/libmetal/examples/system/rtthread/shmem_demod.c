@@ -62,7 +62,11 @@ struct msg_hdr_s {
 	uint32_t len;
 };
 
-#define LPRINTF rt_kprintf
+#define LPRINTF(format, ...) \
+	        rt_kprintf("\r\nCLIENT> " format, ##__VA_ARGS__)
+
+#define LPERROR(format, ...) LPRINTF("ERROR: " format, ##__VA_ARGS__)
+
 
 #define VRING_START (0x90000000)
 #define VRING_SIZE  (0x00100000)
@@ -80,14 +84,20 @@ struct msg_hdr_s {
  */
 static int shmem_echod(struct metal_io_region *shm_io)
 {
+	uint32_t data_32;
 
-	VRING(shm_io, 0) = 0x1;
-	VRING(shm_io, 4) = 0x2;
-	VRING(shm_io, 8) = 0x3;
-	VRING(shm_io, 0xc) = 0x4;
-	LPRINTF("Wait finish\r\n");
-	while(VRING(shm_io, 0x10) == 0);
-	LPRINTF("Shared memory test finished\r\n");
+	LPRINTF("Demo started\n");
+	//LPRINTF("Wait for shared memory demo to start.\r\n");
+	metal_io_write32(shm_io, SHM_DEMO_CNTRL_OFFSET, 0);
+	while((data_32 = metal_io_read32(shm_io, SHM_DEMO_CNTRL_OFFSET)) == 0);
+	LPRINTF("Got 0x%lx from 0x%lx\n", data_32, SHM_DEMO_CNTRL_OFFSET);
+//	VRING(shm_io, 0) = 0x1;
+//	VRING(shm_io, 4) = 0x2;
+//	VRING(shm_io, 8) = 0x3;
+//	VRING(shm_io, 0xc) = 0x4;
+//	LPRINTF("Wait finish\r\n");
+//	while(VRING(shm_io, 0x10) == 0);
+//	LPRINTF("Shared memory test finished\r\n");
 	return 0;
 }
 
@@ -97,10 +107,10 @@ int shmem_demod()
 	struct metal_io_region vring;
 	int ret = 0;
 
-	LPRINTF("shared memory");
+	LPRINTF("Configuration share memory\n");
 	memset(&vring, 0, sizeof(vring));
 	io = &vring;
-	io->virt = VRING_START;
+	metal_io_init(io, (void*)VRING_START, (const metal_phys_addr_t *)VRING_START, VRING_SIZE, -1, 0, NULL);
 
 #if 0
 	/* Get shared memory device IO region */

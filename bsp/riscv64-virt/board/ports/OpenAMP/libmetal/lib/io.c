@@ -6,6 +6,7 @@
 
 #include <errno.h>
 #include <limits.h>
+#define METAL_INTERNAL
 #include <metal/io.h>
 #include <metal/sys.h>
 

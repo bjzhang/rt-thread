@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#define METAL_INTERNAL
 #include <string.h>
 #include <errno.h>
 #include <metal/assert.h>
