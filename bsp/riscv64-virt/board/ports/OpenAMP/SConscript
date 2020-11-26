@@ -26,6 +26,7 @@ libmetal/lib/system/rtthread/riscv/sys.c
 
 src += ['libmetal/test/system/rtthread/atomic.c']
 src += ['libmetal/test/system/rtthread/mutex.c']
+src += ['libmetal/examples/system/rtthread/shmem_demod.c']
 
 src += Split("""
 libmetal/test/metal-test.c
