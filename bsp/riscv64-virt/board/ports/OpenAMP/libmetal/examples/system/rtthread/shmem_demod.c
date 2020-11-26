@@ -84,20 +84,71 @@ struct msg_hdr_s {
  */
 static int shmem_echod(struct metal_io_region *shm_io)
 {
-	uint32_t data_32;
+	void *data = NULL;
+	struct msg_hdr_s *msg_hdr;
+	unsigned int rx_count = 0;
+	unsigned int len;
+	int ret = 0;
 
-	LPRINTF("Demo started\n");
-	//LPRINTF("Wait for shared memory demo to start.\r\n");
+	/* clear demo status value */
 	metal_io_write32(shm_io, SHM_DEMO_CNTRL_OFFSET, 0);
-	while((data_32 = metal_io_read32(shm_io, SHM_DEMO_CNTRL_OFFSET)) == 0);
-	LPRINTF("Got 0x%lx from 0x%lx\n", data_32, SHM_DEMO_CNTRL_OFFSET);
-//	VRING(shm_io, 0) = 0x1;
-//	VRING(shm_io, 4) = 0x2;
-//	VRING(shm_io, 8) = 0x3;
-//	VRING(shm_io, 0xc) = 0x4;
-//	LPRINTF("Wait finish\r\n");
-//	while(VRING(shm_io, 0x10) == 0);
-//	LPRINTF("Shared memory test finished\r\n");
+
+	/* allocate memory for receiving data */
+	data = metal_allocate_memory(SHM_BUFFER_SIZE);
+	if (!data) {
+		LPERROR("Failed to allocate memory.\r\n");
+		return -1;
+	}
+
+	LPRINTF("Wait for shared memory demo to start.\r\n");
+	while (metal_io_read32(shm_io, SHM_DEMO_CNTRL_OFFSET) !=
+		DEMO_STATUS_START);
+
+	LPRINTF("Demo has started.\r\n");
+	/* wait for message is available */
+	while(metal_io_read32(shm_io, SHM_DEMO_CNTRL_OFFSET) ==
+		DEMO_STATUS_START) {
+		if (metal_io_read32(shm_io, SHM_RX_AVAIL_OFFSET)
+			== rx_count)
+			continue;
+		/* Message is available, read the message header */
+		ret = metal_io_block_read(shm_io, SHM_RX_BUFFER_OFFSET,
+					data, sizeof(struct msg_hdr_s));
+		if (ret < 0){
+			LPERROR("Unable to metal_io_block_read()\n");
+			return ret;
+		}
+		msg_hdr = (struct msg_hdr_s *)data;
+		/* Get the length of the data, if the data length is
+		 * too large, truncate it. */
+		len = msg_hdr->len;
+		if (msg_hdr->len >
+			(SHM_BUFFER_SIZE - sizeof(*msg_hdr))) {
+			LPERROR("Input message is too long %u.\n",
+				msg_hdr->len);
+			len = SHM_BUFFER_SIZE - sizeof(*msg_hdr);
+		}
+		/* Read the message data */
+		ret = metal_io_block_read(shm_io,
+				SHM_RX_BUFFER_OFFSET + sizeof(*msg_hdr),
+				data + sizeof(*msg_hdr), len);
+
+		rx_count++;
+		ret = metal_io_block_write(shm_io,
+			SHM_TX_BUFFER_OFFSET,
+			(void*)data, sizeof(*msg_hdr) + len);
+		if (ret < 0){
+			LPERROR("Unable to metal_io_block_write()\n");
+			return ret;
+		}
+
+		/* increase TX available value to notify the other end
+		 * there is data ready to read. */
+		metal_io_write32(shm_io, SHM_TX_AVAIL_OFFSET, rx_count);
+	}
+
+	metal_free_memory(data);
+	LPRINTF("Shared memory test finished\r\n");
 	return 0;
 }
 
