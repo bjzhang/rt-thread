@@ -77,9 +77,9 @@ int main(void)
 	int status;
 
 	rt_kprintf("Hello RT-Thread on RISC-V\n");
-	shmem_demod();
-
-	while(1);
+//	shmem_demod();
+//
+//	while(1);
 	return status;
 }
 
