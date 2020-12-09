@@ -20,6 +20,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
 #define RT_DEBUG
+#define RT_DEBUG_INIT 1
 
 /* Inter-Thread communication */
 
