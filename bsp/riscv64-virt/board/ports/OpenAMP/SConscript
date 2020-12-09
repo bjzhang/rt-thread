@@ -38,6 +38,8 @@ include_path += ['open-amp/lib/rpmsg']
 include_path += ['open-amp/lib/include/openamp']
 
 src += ['open-amp/apps/examples/rpmsg_sample_echo/rpmsg-sample-echo.c']
+src += ['open-amp/apps/tests/msg/rpmsg-update.c']
+src += ['open-amp/apps/examples/matrix_multiply/matrix_multiplyd.c']
 src += ['open-amp/apps/system/generic/machine/rv64_virt/virt_rv64_rproc.c']
 src += ['open-amp/apps/system/generic/machine/rv64_virt/helper.c']
 src += ['open-amp/apps/system/generic/machine/rv64_virt/platform_info.c']
