@@ -116,7 +116,7 @@ void rt_thread_exit(void)
 
 #ifdef RT_USING_MMU
     // PGDIR should sync with vm.c
-    #define PGDIR_PA (0x10200000UL + 24 * 1024 * 1024) // 2MB above heap top
+    #define PGDIR_PA (0x90200000UL + 24 * 1024 * 1024) // 2MB above heap top
     /* freeing up all allocated userland memory */
     //if ((uint64_t)(thread->pgdir) != PGDIR_PA)
         // rt_cleanup_pgtable(thread->pgdir);
