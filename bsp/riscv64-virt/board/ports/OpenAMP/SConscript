@@ -11,9 +11,6 @@ libmetal/lib/include/metal/processor
 open-amp/lib/include
 """)
 
-# For open-amp platform_info.h
-include_path += ['open-amp/apps/system/rtthread/machine/generic']
-
 src = Split("""
 libmetal/lib/device.c
 libmetal/lib/log.c
@@ -35,11 +32,29 @@ libmetal/test/system/rtthread/threads.c
 """)
 
 src += ['libmetal/lib/io.c']
-# src += ['open-amp/apps/system/rtthread/machine/generic/helper.c']
-# src += ['open-amp/apps/examples/rpmsg_sample_echo/rpmsg-sample-echo.c']
-# src += ['open-amp/lib/rpmsg/rpmsg.c']
-# src += ['open-amp/apps/machine/rtthread/machine/generic/platform_info.c']
+src += ['libmetal/lib/shmem.c']
+include_path += ['open-amp/apps/system/generic/machine/rv64_virt']
+include_path += ['open-amp/lib/rpmsg']
+include_path += ['open-amp/lib/include/openamp']
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = ['DEFAULT_LOGGER_ON'])
+src += ['open-amp/apps/examples/rpmsg_sample_echo/rpmsg-sample-echo.c']
+src += ['open-amp/apps/system/generic/machine/rv64_virt/virt_rv64_rproc.c']
+src += ['open-amp/apps/system/generic/machine/rv64_virt/helper.c']
+src += ['open-amp/apps/system/generic/machine/rv64_virt/platform_info.c']
+src += ['open-amp/apps/system/generic/machine/rv64_virt/rsc_table.c']
+src += ['open-amp/lib/rpmsg/rpmsg.c']
+src += ['open-amp/lib/rpmsg/rpmsg_virtio.c']
+src += ['open-amp/lib/proxy/rpmsg_retarget.c']
+src += ['open-amp/lib/remoteproc/rsc_table_parser.c']
+src += ['open-amp/lib/remoteproc/remoteproc_virtio.c']
+src += ['open-amp/lib/remoteproc/elf_loader.c']
+src += ['open-amp/lib/remoteproc/remoteproc.c']
+src += ['open-amp/lib/virtio/virtqueue.c']
+src += ['open-amp/lib/virtio/virtio.c']
+
+CPPDEFINES = []
+CPPDEFINES += ['DEFAULT_LOGGER_ON']
+CPPDEFINES += ['RPMSG_NO_IPI']
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
