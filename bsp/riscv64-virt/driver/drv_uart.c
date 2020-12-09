@@ -136,7 +136,7 @@ static int drv_uart_putc(struct rt_serial_device *serial, char c)
 static int drv_uart_getc(struct rt_serial_device *serial)
 {
     // using SBI interface
-    SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
 }
 
 void drv_uart_puts(char *str) {
