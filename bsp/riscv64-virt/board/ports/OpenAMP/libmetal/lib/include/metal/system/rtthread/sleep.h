@@ -24,7 +24,13 @@ extern "C" {
 
 static inline int __metal_sleep_usec(unsigned int usec)
 {
-	metal_unused(usec);
+	rt_tick_t tick = 0;
+
+	tick = usec * RT_TICK_PER_SECOND / 1000000;
+	if (tick == 0 && usec > 0)
+		tick = 1;
+
+	rt_thread_delay(RT_TICK_PER_SECOND);
 	/* Fix me */
 	return 0;
 }
