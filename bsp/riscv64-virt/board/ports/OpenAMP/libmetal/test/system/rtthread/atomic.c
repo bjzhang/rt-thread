@@ -26,7 +26,7 @@ static void atomic_thread(void *arg)
 	int i;
 
 
-	printf("%s enter\n", __func__);
+	metal_log(METAL_LOG_DEBUG, "%s enter\n", __func__);
 //	metal_log(METAL_LOG_DEBUG, "%s enter: atomic test count %d\n", __func__,
 //		  atomic_test_count);
 //	for (i = 0; i < atomic_test_count; i++) {
@@ -35,7 +35,7 @@ static void atomic_thread(void *arg)
 ////		metal_log(METAL_LOG_DEBUG, "counter %d\n", c);
 //		printf("counter %d\n", c);
 //	}
-	printf("%s exit\n", __func__);
+	metal_log(METAL_LOG_DEBUG, "%s exit\n", __func__);
 }
 
 int atomic(void)
@@ -46,6 +46,9 @@ int atomic(void)
 	rt_thread_t thread = NULL;
 
 	metal_log(METAL_LOG_DEBUG, "%s\n", __func__);
+	metal_log(METAL_LOG_DEBUG, "delay test start\n");
+	rt_thread_delay(200);
+	metal_log(METAL_LOG_DEBUG, "delay test end\n");
 	thread = rt_thread_create("atomic", atomic_thread, RT_NULL,
 				  THREAD_STACK_SIZE,
 				  THREAD_PRIORITY,
@@ -61,12 +64,9 @@ int atomic(void)
             metal_log(METAL_LOG_ERROR, "failed to create thread\n");
 	    error--;
         }
-	atomic_fetch_add(&counter, 1);
-	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
-	printf("counter %d\n", counter);
-	printf("before delay\n");
-	rt_thread_delay(200);
-	printf("after delay\n");
+//	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
+//	atomic_fetch_add(&counter, 1);
+//	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
 	if (!error) {
 		metal_log(METAL_LOG_DEBUG, "after metal_run\n");
 		value = atomic_load(&counter);
