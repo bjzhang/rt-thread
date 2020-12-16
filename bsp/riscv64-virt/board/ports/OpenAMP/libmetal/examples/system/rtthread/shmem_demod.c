@@ -152,6 +152,14 @@ static int shmem_echod(struct metal_io_region *shm_io)
 	return 0;
 }
 
+int shmem_demod(void);
+#ifdef RT_USING_FINSH
+FINSH_FUNCTION_EXPORT(shmem_demod, shmem demod);
+#endif /* #ifdef RT_USING_FINSH */
+#ifdef FINSH_USING_MSH
+MSH_CMD_EXPORT(shmem_demod, shmem demod);
+#endif /* #ifdef FINSH_USING_MSH */
+
 int shmem_demod()
 {
 	struct metal_io_region *io = NULL;

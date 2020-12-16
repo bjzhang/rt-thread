@@ -70,16 +70,12 @@ int thread_static_simple()
 FINSH_FUNCTION_EXPORT(thread_static_simple, thread example);
 MSH_CMD_EXPORT(thread_static_simple, thread example);
 
-extern int shmem_demod();
-
 int main(void)
 {
 	int status;
 
 	rt_kprintf("Hello RT-Thread on RISC-V\n");
-//	shmem_demod();
-//
-//	while(1);
+
 	return status;
 }
 
