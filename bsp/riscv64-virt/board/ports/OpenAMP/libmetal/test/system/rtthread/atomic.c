@@ -64,9 +64,9 @@ int atomic(void)
             metal_log(METAL_LOG_ERROR, "failed to create thread\n");
 	    error--;
         }
-//	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
-//	atomic_fetch_add(&counter, 1);
-//	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
+	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
+	atomic_fetch_add(&counter, 1);
+	metal_log(METAL_LOG_DEBUG, "counter %d\n", counter);
 	if (!error) {
 		metal_log(METAL_LOG_DEBUG, "after metal_run\n");
 		value = atomic_load(&counter);
