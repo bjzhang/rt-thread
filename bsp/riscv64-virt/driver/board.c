@@ -56,6 +56,7 @@ void primary_cpu_entry(void)
 void rt_hw_interrupt_init() {
     // rt_hw_interrupt_enable(0);
     // FOO implementation here
+    set_csr(sie, SIP_SSIP);
 }
 #define NUM_SYSCALLS 64
 long (*syscall[NUM_SYSCALLS])();
@@ -144,12 +145,34 @@ void handle_syscall(uintptr_t scause, uintptr_t sepc, uintptr_t sp) {
     }
 }
 
+static rt_isr_handler_t softirq_handler = RT_NULL;
+rt_isr_handler_t rt_hw_irq_soft_install(rt_isr_handler_t handler)
+{
+    rt_isr_handler_t old_handler = softirq_handler;
+
+    if (handler != RT_NULL)
+	    softirq_handler = handler;
+
+    return old_handler;
+}
+
+void handle_irq_soft(void)
+{
+    if (softirq_handler != RT_NULL)
+	    softirq_handler(0, RT_NULL);
+}
+
 uintptr_t handle_trap(uintptr_t scause, uintptr_t stval, uintptr_t sepc, uintptr_t sp) {
     // while (1);
     rt_hw_interrupt_disable();
     if (scause == (uint64_t)(0x8000000000000005)) {
         // timer interrupt
         tick_isr();
+    }
+    if (scause == (uint64_t)(0x8000000000000001)) {
+        // software interrupt
+       clear_csr(sip, SIP_SSIP);
+       handle_irq_soft();
     }
     if (scause != SYSCALL_SCAUSE) {
         if (serial1.serial_rx != NULL)
