@@ -162,6 +162,28 @@ void handle_irq_soft(void)
 	    softirq_handler(0, RT_NULL);
 }
 
+int rt_irq_soft_pending(void)
+{
+    // software interrupt
+   unsigned long csr = read_csr(sip);
+
+   if (csr & SIP_SSIP)
+       return 1;
+   else
+       return 0;
+}
+
+void rt_irq_soft_clear(void)
+{
+    // software interrupt
+   clear_csr(sip, SIP_SSIP);
+}
+
+void rt_irq_soft_trigger(void)
+{
+
+}
+
 uintptr_t handle_trap(uintptr_t scause, uintptr_t stval, uintptr_t sepc, uintptr_t sp) {
     // while (1);
     rt_hw_interrupt_disable();
@@ -170,8 +192,6 @@ uintptr_t handle_trap(uintptr_t scause, uintptr_t stval, uintptr_t sepc, uintptr
         tick_isr();
     }
     if (scause == (uint64_t)(0x8000000000000001)) {
-        // software interrupt
-       clear_csr(sip, SIP_SSIP);
        handle_irq_soft();
     }
     if (scause != SYSCALL_SCAUSE) {
