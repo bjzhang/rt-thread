@@ -33,10 +33,6 @@ libmetal/test/system/rtthread/threads.c
 
 src += ['libmetal/lib/io.c']
 src += ['libmetal/lib/shmem.c']
-src += ['libmetal/lib/irq.c']
-src += ['libmetal/lib/system/rtthread/riscv/irq.c']
-#src += ['libmetal/lib/system/rtthread/riscv/sys.h']
-src += ['libmetal/test/system/rtthread/irq.c']
 include_path += ['open-amp/apps/system/generic/machine/rv64_virt']
 include_path += ['open-amp/lib/rpmsg']
 include_path += ['open-amp/lib/include/openamp']
