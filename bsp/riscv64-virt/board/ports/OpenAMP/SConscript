@@ -60,6 +60,7 @@ src += ['open-amp/lib/virtio/virtio.c']
 
 CPPDEFINES = []
 CPPDEFINES += ['DEFAULT_LOGGER_ON']
+CPPDEFINES += ['RPMSG_NO_IPI']
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
