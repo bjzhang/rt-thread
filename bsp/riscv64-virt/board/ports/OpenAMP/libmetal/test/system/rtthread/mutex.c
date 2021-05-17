@@ -24,8 +24,11 @@ static void *mutex_thread(void *arg)
 
     for (i = 0; i < mutex_test_count; i++)
     {
+        printf("before metal_mutex_acquire\n");
         metal_mutex_acquire(l);
+        printf("before usleep\n");
         usleep(1);
+        printf("before metal_mutex_release\n");
         metal_mutex_release(l);
 	if (i % 100 == 0)
 		printf("count: %d\n", i);
@@ -40,6 +43,8 @@ int mutex(void)
     const int threads = 10;
     int rc;
 
+    printf("mutex before usleep\n");
+    usleep(1);
     printf("before metal_mutex_init\n");
     metal_mutex_init(&lock);
     printf("after metal_mutex_init\n");
