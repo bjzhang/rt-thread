@@ -40,5 +40,3 @@ config RT_USING_MMU
     bool "ENABLE MMU"
     default y
 
-source "board/ports/OpenAMP/Kconfig"
-

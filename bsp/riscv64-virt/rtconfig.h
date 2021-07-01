@@ -181,7 +181,5 @@
 #define __STACKSIZE__ 4096
 #define RISCV_U_MODE
 #define RT_USING_MMU
-#define RT_USING_OPENAMP
-#define RT_USING_OPENAMP_TEST
 
 #endif

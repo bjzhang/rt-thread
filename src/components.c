@@ -194,7 +194,6 @@ void rt_application_init(void)
 {
     rt_thread_t tid;
 
-    main();
 #ifdef RT_USING_HEAP
     tid = rt_thread_create("main", main_thread_entry, RT_NULL,
                            RT_MAIN_THREAD_STACK_SIZE, RT_MAIN_THREAD_PRIORITY, 20);

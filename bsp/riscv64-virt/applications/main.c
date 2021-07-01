@@ -27,8 +27,6 @@
 #include <rtthread.h>
 #include <dfs_fs.h>
 
-#define OPENAMP_TEST
-#ifndef OPENAMP_TEST
 int main(void)
 {
 	// printf("Hallo RT-Thread von RISC-V\n");
@@ -45,4 +43,3 @@ int main(void)
     }
 	return 0;
 }
-#endif /* #ifndef OPENAMP_TEST */

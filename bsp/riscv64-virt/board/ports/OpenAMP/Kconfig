@@ -1,8 +1,0 @@
-
-config RT_USING_OPENAMP
-    bool "ENABLE OpenAMP"
-    default y
-
-config RT_USING_OPENAMP_TEST
-    bool "ENABLE OpenAMP test"
-    default y
