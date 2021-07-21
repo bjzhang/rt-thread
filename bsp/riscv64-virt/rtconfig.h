@@ -162,14 +162,30 @@
 
 /* system packages */
 
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
+/* OpenAMP: AMP solution for rt-thread */
+
+#define PKG_USING_LIBMETAL
+#define PKG_USING_LIBMETAL_LATEST_VERSION
 
 /* peripheral libraries and drivers */
+
+
+/* AI packages */
 
 
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
+
+
+/* entertainment: terminal games and other interesting software packages */
 
 #define BOARD_virt
 
